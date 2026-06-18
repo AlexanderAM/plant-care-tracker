@@ -46,5 +46,9 @@ public class FlowerController {
     public FlowerResponseDto waterFlower(@PathVariable Long id) {
         return flowerService.waterFlower(id);
     }
-    
+
+    @GetMapping("/need-watering")
+    public List<FlowerResponseDto> getNeedWatering() {
+        return flowerService.getNeedWatering();
+    }
 }

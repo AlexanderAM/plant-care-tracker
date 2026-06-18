@@ -1,7 +1,9 @@
 package com.penzgtu.plant_care_tracker.controller;
 
+import com.penzgtu.plant_care_tracker.dto.FlowerResponseDto;
 import com.penzgtu.plant_care_tracker.dto.RoomDto;
 import com.penzgtu.plant_care_tracker.dto.RoomResponseDto;
+import com.penzgtu.plant_care_tracker.service.FlowerService;
 import com.penzgtu.plant_care_tracker.service.RoomService;
 
 import jakarta.validation.Valid;
@@ -16,6 +18,7 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
+    private final FlowerService flowerService;
 
     @GetMapping
     public List<RoomResponseDto> getAllRooms() {
@@ -25,6 +28,11 @@ public class RoomController {
     @GetMapping("/{id}")
     public RoomResponseDto getRoom(@PathVariable Long id) {
         return roomService.getRoom(id);
+    }
+
+    @GetMapping("/{id}/flowers")
+    public List<FlowerResponseDto> getFlowersInRoom(@PathVariable Long id) {
+        return flowerService.getFlowersInRoom(id);
     }
 
     @PostMapping
