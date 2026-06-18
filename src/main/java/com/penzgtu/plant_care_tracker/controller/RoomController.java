@@ -1,7 +1,10 @@
 package com.penzgtu.plant_care_tracker.controller;
 
-import com.penzgtu.plant_care_tracker.model.Room;
-import com.penzgtu.plant_care_tracker.repository.RoomRepository;
+import com.penzgtu.plant_care_tracker.dto.RoomDto;
+import com.penzgtu.plant_care_tracker.dto.RoomResponseDto;
+import com.penzgtu.plant_care_tracker.service.RoomService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,32 +15,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoomController {
 
-    private final RoomRepository roomRepository;
+    private final RoomService roomService;
 
     @GetMapping
-    public List<Room> getAllRooms() {
-        return roomRepository.findAll();
-    }
-
-    @PostMapping
-    public Room createRoom(@RequestBody Room room) {
-        return roomRepository.save(room);
+    public List<RoomResponseDto> getAllRooms() {
+        return roomService.getAllRooms();
     }
 
     @GetMapping("/{id}")
-    public Room getRoom(@PathVariable Long id) {
-        return roomRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+    public RoomResponseDto getRoom(@PathVariable Long id) {
+        return roomService.getRoom(id);
+    }
+
+    @PostMapping
+    public RoomResponseDto createRoom(@Valid @RequestBody RoomDto request) {
+        return roomService.createRoom(request);
     }
 
     @PutMapping("/{id}")
-    public Room updateRoom(@PathVariable Long id, @RequestBody Room room) {
-        room.setId(id);
-        return roomRepository.save(room);
+    public RoomResponseDto updateRoom(@PathVariable Long id, @Valid @RequestBody RoomDto request) {
+        return roomService.updateRoom(id, request);
     }
 
     @DeleteMapping("/{id}")
     public void deleteRoom(@PathVariable Long id) {
-        roomRepository.deleteById(id);
+        roomService.deleteRoom(id);
     }
 }

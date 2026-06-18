@@ -1,7 +1,10 @@
 package com.penzgtu.plant_care_tracker.controller;
 
-import com.penzgtu.plant_care_tracker.model.Flower;
-import com.penzgtu.plant_care_tracker.repository.FlowerRepository;
+import com.penzgtu.plant_care_tracker.dto.FlowerDto;
+import com.penzgtu.plant_care_tracker.dto.FlowerResponseDto;
+import com.penzgtu.plant_care_tracker.service.FlowerService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,34 +15,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FlowerController {
 
-    private final FlowerRepository flowerRepository;
+    private final FlowerService flowerService;
 
     @GetMapping
-    public List<Flower> getAllFlowers() {
-        return flowerRepository.findAll();
+    public List<FlowerResponseDto> getAllFlowers() {
+        return flowerService.getAllFlowers();
     }
 
     @PostMapping
-    public Flower createFlower(@RequestBody Flower flower) {
-        // Пока просто сохраняем, предполагая, что lastWateringDate передан
-        return flowerRepository.save(flower);
+    public FlowerResponseDto createFlower(@Valid @RequestBody FlowerDto request) {
+        return flowerService.createFlower(request);
     }
 
     @GetMapping("/{id}")
-    public Flower getFlower(@PathVariable Long id) {
-        return flowerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flower not found"));
+    public FlowerResponseDto getFlower(@PathVariable Long id) {
+        return flowerService.getFlower(id);
     }
 
     @PutMapping("/{id}")
-    public Flower updateFlower(@PathVariable Long id, @RequestBody Flower flower) {
-        flower.setId(id);
-        return flowerRepository.save(flower);
+    public FlowerResponseDto updateFlower(@PathVariable Long id, @Valid @RequestBody FlowerDto request) {
+        return flowerService.updateFlower(id, request);
     }
 
     @DeleteMapping("/{id}")
     public void deleteFlower(@PathVariable Long id) {
-        flowerRepository.deleteById(id);
+        flowerService.deleteFlower(id);
+    }
+
+    @PostMapping("/{id}/water")
+    public FlowerResponseDto waterFlower(@PathVariable Long id) {
+        return flowerService.waterFlower(id);
     }
     
 }

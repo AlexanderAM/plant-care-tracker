@@ -19,15 +19,16 @@ public class Flower {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(length = 100)
-    private String type;
+    @Column(length = 255)
+    private String description;
 
     @Column(name = "watering_interval_days", nullable = false)
     private Integer wateringIntervalDays;
 
-    @Column(name = "room_id", nullable = false)
-    private Long roomId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
 
-    @Column(name = "last_watering_date", nullable = false)
+    @Column(name = "last_watering_date")
     private LocalDate lastWateringDate;
 }
