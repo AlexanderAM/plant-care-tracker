@@ -15,6 +15,6 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
 
     boolean existsByRoomId(Long roomId);
 
-    @Query("SELECT f FROM Flower f WHERE (CURRENT_DATE - f.lastWateringDate) >= f.wateringIntervalDays OR f.lastWateringDate IS NULL")
+    @Query(value = "SELECT * FROM flowers WHERE last_watering_date IS NULL OR DATEDIFF('DAY', last_watering_date, CURRENT_DATE) >= watering_interval_days", nativeQuery = true)
     List<Flower> findNeedWatering();
 }
