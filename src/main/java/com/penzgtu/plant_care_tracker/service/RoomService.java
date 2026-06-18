@@ -2,12 +2,13 @@ package com.penzgtu.plant_care_tracker.service;
 
 import com.penzgtu.plant_care_tracker.dto.RoomDto;
 import com.penzgtu.plant_care_tracker.dto.RoomResponseDto;
+import com.penzgtu.plant_care_tracker.exception.ResourceConflictException;
+import com.penzgtu.plant_care_tracker.exception.ResourceNotFoundException;
 import com.penzgtu.plant_care_tracker.model.Room;
+import com.penzgtu.plant_care_tracker.repository.FlowerRepository;
 import com.penzgtu.plant_care_tracker.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final FlowerRepository flowerRepository;
 
     public List<RoomResponseDto> getAllRooms() {
         return roomRepository.findAll().stream()
@@ -26,7 +28,7 @@ public class RoomService {
 
     public RoomResponseDto getRoom(Long id) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
         return toResponse(room);
     }
 
@@ -39,7 +41,7 @@ public class RoomService {
 
     public RoomResponseDto updateRoom(Long id, RoomDto request) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
         room.setName(request.getName());
         Room updated = roomRepository.save(room);
         return toResponse(updated);
@@ -47,7 +49,10 @@ public class RoomService {
 
     public void deleteRoom(Long id) {
         if (!roomRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found");
+            throw new ResourceNotFoundException("Room not found");
+        }
+        if (flowerRepository.existsByRoomId(id)) {
+            throw new ResourceConflictException("Cannot delete room: it contains flowers");
         }
         roomRepository.deleteById(id);
     }

@@ -10,8 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 
 
 public interface FlowerRepository extends JpaRepository<Flower, Long> {
-    
+
     List<Flower> findByRoom(Room room);
+
+    boolean existsByRoomId(Long roomId);
 
     @Query("SELECT f FROM Flower f WHERE (CURRENT_DATE - f.lastWateringDate) >= f.wateringIntervalDays OR f.lastWateringDate IS NULL")
     List<Flower> findNeedWatering();
